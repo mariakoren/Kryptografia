@@ -1,8 +1,17 @@
 import argparse
+def cezar(key, data):
+    szyfrogram = ""
+    for i in data: 
+        litera = key + ord(i)
+        if litera > ord('z'):
+            litera -= 26
+        elif litera < ord('a'): 
+            litera += 26
+        szyfrogram += chr(litera)
+    return szyfrogram
 
 def main():
     parser = argparse.ArgumentParser(description='Opis twojego programu')
-
     parser.add_argument('-c', '--option_c', help='Cezar', action='store_true')
     parser.add_argument('-a', '--option_a', help='Alfaniczny', action='store_true')
     parser.add_argument('-e', '--option_e', help='Szyfrowanie', action='store_true')
@@ -19,14 +28,7 @@ def main():
             readkey = file.read()
             try: 
                 key = int(readkey)
-                szyfrogram = ""
-                for i in data: 
-                    litera = key + ord(i)
-                    if litera > ord('z'):
-                        litera -= 26
-                    elif litera < ord('a'): 
-                        litera += 26
-                    szyfrogram += chr(litera)
+                szyfrogram = cezar(key, data)
                 with open("crypto.txt", "w") as file:
                     file.write(szyfrogram)
             except: 
