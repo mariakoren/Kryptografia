@@ -10,6 +10,25 @@ def cezar(key, data):
         szyfrogram += chr(litera)
     return szyfrogram
 
+def nwd(a, b):
+    if b > 0:
+        return nwd(b, a%b)
+    return a
+
+
+def alfaniczny(a, b, data):
+    szyfrogram = ""
+    for i in data:
+        litera = (a*ord(i)+b)%26+97
+        if litera > ord('z'):
+            litera -= 26
+        elif litera < ord('a'): 
+            litera += 26
+        szyfrogram += chr(litera)
+        # szyfrogram += str(litera)+" "
+    return szyfrogram
+
+
 def main():
     parser = argparse.ArgumentParser(description='Opis twojego programu')
     parser.add_argument('-c', '--option_c', help='Cezar', action='store_true')
@@ -36,7 +55,22 @@ def main():
 
 
     if args.option_a:
-        print("Alfaniczny")
+        with open('plain.txt', 'r') as file:
+            data = file.read()
+        with open('key.txt', 'r') as file:
+            key = file.read().split()
+        
+            a = int(key[0])
+            b = int(key[1])
+            nwd_value = nwd(a, 26)
+            if nwd_value != 1:
+                raise ValueError(f"Niepoprawna wartość klucza, klucz musi być parą liczb naturalnych takich, że NWD(a,26)=1, nwd {nwd_value}")
+            szyfrogram = alfaniczny(a, b, data)
+            with open("crypto.txt", "a") as file:
+                file.write(szyfrogram)
+
+            # except: 
+            #     raise ValueError(f"Niepoprawna wartość klucza, klucz musi być parą liczb naturalnych takich, że NWD(a,26)=1, podana wartość {key}")
     if args.option_e:
         print("Szyfrowanie")
     if args.option_d:
