@@ -13,20 +13,25 @@ def main():
     args = parser.parse_args()
     
     if args.option_c:
-        print("Cezar")
         with open('plain.txt', 'r') as file:
             data = file.read()
-            print(data)
-
         with open('key.txt', 'r') as file:
             readkey = file.read()
             try: 
                 key = int(readkey)
+                szyfrogram = ""
+                for i in data: 
+                    litera = key + ord(i)
+                    if litera > ord('z'):
+                        litera -= 26
+                    elif litera < ord('a'): 
+                        litera += 26
+                    szyfrogram += chr(litera)
+                with open("crypto.txt", "w") as file:
+                    file.write(szyfrogram)
             except: 
                 raise ValueError(f"Niepoprawna wartość klucza, klucz musi być liczbą naturalną w zakresie 1...25, podana wartość {readkey}")
-  
-            if key > 25 or key < 1:
-                raise ValueError(f"Niepoprawna wartość klucza, klucz musi być w zakresie 1...25, podana wartość {key}")
+
 
     if args.option_a:
         print("Alfaniczny")
