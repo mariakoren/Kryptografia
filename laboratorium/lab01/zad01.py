@@ -10,6 +10,21 @@ def cezar(key, data):
         szyfrogram += chr(litera)
     return szyfrogram
 
+def cezar_d(key, data):
+    szyfrogram = ""
+    for i in data: 
+        litera = ord(i) - key
+        if litera > ord('z'):
+            litera -= 26
+        elif litera < ord('a'): 
+            litera += 26
+        szyfrogram += chr(litera)
+    return szyfrogram
+
+
+
+
+
 def nwd(a, b):
     if b > 0:
         return nwd(b, a%b)
@@ -20,14 +35,31 @@ def alfaniczny(a, b, data):
     szyfrogram = ""
     for i in data:
         litera = (a*ord(i)+b)%26+97
-        if litera > ord('z'):
-            litera -= 26
-        elif litera < ord('a'): 
-            litera += 26
+        # if litera > ord('z'):
+        #     litera -= 26
+        # elif litera < ord('a'): 
+        #     litera += 26
         szyfrogram += chr(litera)
-        # szyfrogram += str(litera)+" "
     return szyfrogram
 
+
+def alfaniczny_d(a, b, data):
+    szyfrogram = ""
+
+    for i in range(1, 26):
+            if (a * i) % 26 == 1:
+                aprim = i
+
+    print(aprim)
+
+    for i in data:
+        litera = (aprim*(ord(i)-b))%26+97
+        # if litera > ord('z'):
+        #     litera -= 26
+        # elif litera < ord('a'): 
+        #     litera += 26
+        szyfrogram += chr(litera)
+    return szyfrogram
 
 def main():
     parser = argparse.ArgumentParser(description='Opis twojego programu')
@@ -40,7 +72,7 @@ def main():
  
     args = parser.parse_args()
     
-    if args.option_c:
+    if args.option_c and args.option_e:
         with open('plain.txt', 'r') as file:
             data = file.read()
         with open('key.txt', 'r') as file:
@@ -53,8 +85,21 @@ def main():
             except: 
                 raise ValueError(f"Niepoprawna wartość klucza, klucz musi być liczbą naturalną w zakresie 1...25, podana wartość {readkey}")
 
+    if args.option_c and args.option_d:
+        with open('crypto.txt', 'r') as file:
+            data = file.read()
+        with open('key.txt', 'r') as file:
+            readkey = file.read()
+            try: 
+                key = int(readkey)
+                decrypt = cezar_d(key, data)
+                with open("plain.txt", "w") as file:
+                    file.write(decrypt)
+            except: 
+                raise ValueError(f"Niepoprawna wartość klucza, klucz musi być liczbą naturalną w zakresie 1...25, podana wartość {readkey}")
 
-    if args.option_a:
+
+    if args.option_a and args.option_e:
         with open('plain.txt', 'r') as file:
             data = file.read()
         with open('key.txt', 'r') as file:
@@ -69,12 +114,22 @@ def main():
             with open("crypto.txt", "a") as file:
                 file.write(szyfrogram)
 
-            # except: 
-            #     raise ValueError(f"Niepoprawna wartość klucza, klucz musi być parą liczb naturalnych takich, że NWD(a,26)=1, podana wartość {key}")
-    if args.option_e:
-        print("Szyfrowanie")
-    if args.option_d:
-        print("Odszyfrowanie")
+    if args.option_a and args.option_d:
+        with open('crypto.txt', 'r') as file:
+            data = file.read()
+        with open('key.txt', 'r') as file:
+            key = file.read().split()
+        
+            a = int(key[0])
+            b = int(key[1])
+            nwd_value = nwd(a, 26)
+            if nwd_value != 1:
+                raise ValueError(f"Niepoprawna wartość klucza, klucz musi być parą liczb naturalnych takich, że NWD(a,26)=1, nwd {nwd_value}")
+            decrypt = alfaniczny_d(a, b, data)
+            with open("plain.txt", "a") as file:
+                file.write(decrypt)
+
+
     if args.option_j:
         print("Kryptoanaliza z tekstem jawnym")
     if args.option_k:
