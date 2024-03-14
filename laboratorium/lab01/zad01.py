@@ -37,6 +37,36 @@ def cezar_d(key, data):
         szyfrogram += chr(litera)
     return szyfrogram
 
+def cezar_j(data, extra):
+    data = data.replace('\n', ' ')
+    extra = extra.replace('\n', ' ')
+    extra = extra.split(" ")
+    for index_word, word in enumerate(data):
+        for index_character, character in enumerate(word):
+            if ord(character) in range(65, 91) or ord(character) in range(97, 123):
+                key = (ord(character) - ord(extra[index_word][index_character])) % 26
+                return key
+    with open("key-new.txt", "w") as f:
+        f.write(str(key))
+
+def cezar_k(data):
+    message = ""
+    for key in range(1, 26):
+        for i in data:
+            litera = ord(i)
+            if litera in range(65, 91):
+                litera -= key
+                if litera < 65:
+                    litera = litera + 26
+            if litera in range(97, 123):
+                litera -= key
+                if litera < 97:
+                    litera = litera + 26
+            message += chr(litera)
+        message += "\n"
+    return message
+
+
 
 def find_prime(x):
     counter = 0
@@ -89,70 +119,98 @@ def main():
     args = parser.parse_args()
     
     if args.option_c and args.option_e:
-        with open('plain.txt', 'r') as file:
-            data = file.read()
-        with open('key.txt', 'r') as file:
-            readkey = file.read()
-       
-        key = int(readkey)
-        if not 1 <= key <= 25:
-            raise ValueError(f"Niewłaściwa wartość klucza, klucz musi być liczbą naturalną w zakresie 1...25, podana wartość: {readkey}")
-        szyfrogram = cezar(key, data)
-        with open("crypto.txt", "w") as file:
-            file.write(szyfrogram)
+        try: 
+            with open('plain.txt', 'r') as file:
+                data = file.read()
+            with open('key.txt', 'r') as file:
+                readkey = file.read()
+
+            key = int(readkey)
+            if not 1 <= key <= 25:
+                raise ValueError(f"Niewłaściwa wartość klucza, klucz musi być liczbą naturalną w zakresie 1...25, podana wartość: {readkey}")
+            szyfrogram = cezar(key, data)
+            with open("crypto.txt", "w") as file:
+                file.write(szyfrogram)
+        except ValueError as e:
+            raise ValueError(str(e))
 
     
 
     if args.option_c and args.option_d:
+        try:
+            with open('crypto.txt', 'r') as file:
+                data = file.read()
+            with open('key.txt', 'r') as file:
+                readkey = file.read()
+
+            key = int(readkey)
+            if not 1 <= key <= 25:
+                raise ValueError(f"Niewłaściwa wartość klucza, klucz musi być liczbą naturalną w zakresie 1...25, podana wartość: {readkey}")
+            decrypt = cezar_d(key, data)
+            with open("plain.txt", "w") as file:
+                file.write(decrypt)
+        except ValueError as e:
+            raise ValueError(str(e))
+        
+    if args.option_c and args.option_j:
         with open('crypto.txt', 'r') as file:
             data = file.read()
-        with open('key.txt', 'r') as file:
-            readkey = file.read()
+        with open('extra.txt', 'r') as file:
+            extra = file.read()
+        key_new = cezar_j(data, extra)
+        with open("key-new.txt", "w") as file:
+            file.write(str(key_new))
 
-        key = int(readkey)
-        if not 1 <= key <= 25:
-            raise ValueError(f"Niewłaściwa wartość klucza, klucz musi być liczbą naturalną w zakresie 1...25, podana wartość: {readkey}")
-        decrypt = cezar_d(key, data)
+    if args.option_c and args.option_k:
+        with open('crypto.txt', 'r') as file:
+            data = file.read()
+        message = cezar_k(data)
         with open("plain.txt", "w") as file:
-            file.write(decrypt)
-        
+            file.write(str(message))
+
 
     if args.option_a and args.option_e:
-        with open('plain.txt', 'r') as file:
-            data = file.read()
-        with open('key.txt', 'r') as file:
-            key = file.read().split()
-        
-        a = int(key[0])
-        b = int(key[1])
-        nwd_value = nwd(a, 26)
-        if nwd_value != 1:
-            raise ValueError(f"Niepoprawna wartość klucza, klucz musi być parą liczb naturalnych takich, że NWD(a,26)=1, nwd {nwd_value}")
-        szyfrogram = alfaniczny(a, b, data)
-        with open("crypto.txt", "a") as file:
-            file.write(szyfrogram)
-        print(f"zaszyfrowany tekst to {szyfrogram}")
+        try:
+            with open('plain.txt', 'r') as file:
+                data = file.read()
+            with open('key.txt', 'r') as file:
+                key = file.read().split()
+
+            a = int(key[0])
+            b = int(key[1])
+            nwd_value = nwd(a, 26)
+            if nwd_value != 1:
+                raise ValueError(f"Niepoprawna wartość klucza, klucz musi być parą liczb naturalnych takich, że NWD(a,26)=1, nwd {nwd_value}")
+            szyfrogram = alfaniczny(a, b, data)
+            with open("crypto.txt", "a") as file:
+                file.write(szyfrogram)
+        except ValueError as e:
+            raise ValueError(str(e))
+
 
     if args.option_a and args.option_d:
-        with open('crypto.txt', 'r') as file:
-            data = file.read()
-        with open('key.txt', 'r') as file:
-            key = file.read().split()
-        
-        a = int(key[0])
-        b = int(key[1])
-        nwd_value = nwd(a, 26)
-        if nwd_value != 1:
-            raise ValueError(f"Niepoprawna wartość klucza, klucz musi być parą liczb naturalnych takich, że NWD(a,26)=1, nwd {nwd_value}")
-        decrypt = alfaniczny_d(a, b, data)
-        with open("plain.txt", "a") as file:
-            file.write(decrypt)
+        try:
+            with open('crypto.txt', 'r') as file:
+                data = file.read()
+            with open('key.txt', 'r') as file:
+                key = file.read().split()
+
+            a = int(key[0])
+            b = int(key[1])
+            nwd_value = nwd(a, 26)
+            if nwd_value != 1:
+                raise ValueError(f"Niepoprawna wartość klucza, klucz musi być parą liczb naturalnych takich, że NWD(a,26)=1, nwd {nwd_value}")
+            decrypt = alfaniczny_d(a, b, data)
+            with open("plain.txt", "a") as file:
+                file.write(decrypt)
+        except ValueError as e:
+            raise ValueError(str(e))
 
 
-    if args.option_j:
-        print("Kryptoanaliza z tekstem jawnym")
-    if args.option_k:
-        print("Kryptoanaliza wyłącznie w oparciu o kryptogram")
+    # if args.option_j:
+    #     print("Kryptoanaliza z tekstem jawnym")
+    # if args.option_k:
+    #     print("Kryptoanaliza wyłącznie w oparciu o kryptogram")
     
 
 if __name__ == "__main__":
