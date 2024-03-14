@@ -57,7 +57,11 @@ def cezar_j(data, extra):
     unique = set(keys)
     print(unique)
     if len(unique) == 1:
-        return unique.pop()
+        key = unique.pop()
+        decrypt = cezar_d(key, data)
+        with open("plain.txt", "w") as file:
+            file.write(decrypt)
+        return key
     else:
         return "Can't find a unique result."
 
@@ -172,7 +176,7 @@ def main():
 
     
 
-    if args.option_c and args.option_d:
+    elif args.option_c and args.option_d:
         try:
             with open('crypto.txt', 'r') as file:
                 data = file.read()
@@ -187,7 +191,7 @@ def main():
         except ValueError as e:
             raise ValueError(str(e))
         
-    if args.option_c and args.option_j:
+    elif args.option_c and args.option_j:
         with open('crypto.txt', 'r') as file:
             data = file.read()
         with open('extra.txt', 'r') as file:
@@ -197,7 +201,7 @@ def main():
             file.write(str(key_new))
 
 
-    if args.option_c and args.option_k:
+    elif args.option_c and args.option_k:
         with open('crypto.txt', 'r') as file:
             data = file.read()
         message = cezar_k(data)
@@ -205,7 +209,7 @@ def main():
             file.write(str(message))
 
 
-    if args.option_a and args.option_e:
+    elif args.option_a and args.option_e:
         try:
             with open('plain.txt', 'r') as file:
                 data = file.read()
@@ -223,7 +227,7 @@ def main():
             raise ValueError(str(e))
 
 
-    if args.option_a and args.option_d:
+    elif args.option_a and args.option_d:
         try:
             with open('crypto.txt', 'r') as file:
                 data = file.read()
@@ -240,7 +244,7 @@ def main():
         except ValueError as e:
             raise ValueError(str(e))
         
-    if args.option_a and args.option_j:
+    elif args.option_a and args.option_j:
         with open('crypto.txt', 'r') as file:
             data = file.read()
         with open('extra.txt', 'r') as file:
@@ -250,12 +254,15 @@ def main():
             file.write(str(key_new))
 
 
-    if args.option_a and args.option_k:
+    elif args.option_a and args.option_k:
         with open('crypto.txt', 'r') as file:
             data = file.read()
         message = alfaniczny_k(data)
         with open("plain.txt", "w") as file:
             file.write(str(message))
+
+    else:
+        print("niepoprawne opcje")
 
     
 
