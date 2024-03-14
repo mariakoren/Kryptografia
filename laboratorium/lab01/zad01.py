@@ -125,16 +125,20 @@ def alfaniczny_d(a, b, data):
         szyfrogram += chr(litera)
     return szyfrogram
 
-def alfaniczny_j(dane, extra):
-    if len(extra) < len(dane):
-        dane = dane[:len(extra)]
+def alfaniczny_j(data, extra):
+    if len(extra) < len(data):
+        data_copy = data[:len(extra)]
 
     for a in range(1, 26):
         for b in range(26):
             zaszyfrowany = alfaniczny(a, b, extra)
-            if zaszyfrowany == dane:
-                klucz = f"{a} {b}"
-                return klucz
+            if zaszyfrowany == data_copy:
+                key = f"{a} {b}"
+                decrypt = alfaniczny_d(a, b, data)
+                with open("plain.txt", "w") as file:
+                    file.write(decrypt)
+                return key
+    
     return "Can't find a key"
 
 
