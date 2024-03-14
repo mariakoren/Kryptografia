@@ -41,13 +41,27 @@ def cezar_j(data, extra):
     data = data.replace('\n', ' ')
     extra = extra.replace('\n', ' ')
     extra = extra.split(" ")
-    for index_word, word in enumerate(data):
+    keys = []
+    extra_index = 0
+    for index_word, word in enumerate(data.split()):
+        min_len = min(len(data.split()), len(extra))
+        if index_word >= min_len:
+            break
+        key_word = extra[index_word]
         for index_character, character in enumerate(word):
             if ord(character) in range(65, 91) or ord(character) in range(97, 123):
-                key = (ord(character) - ord(extra[index_word][index_character])) % 26
-                return key
-    with open("key-new.txt", "w") as f:
-        f.write(str(key))
+                key = (ord(character) - ord(key_word[index_character % len(key_word)])) % 26
+                keys.append(key)
+                extra_index = (extra_index + 1) % len(extra) 
+    print(keys)
+    unique = set(keys)
+    print(unique)
+    if len(unique) == 1:
+        return unique.pop()
+    else:
+        return "Can't find a unique result."
+
+
 
 def cezar_k(data):
     message = ""
@@ -107,29 +121,7 @@ def alfaniczny_d(a, b, data):
         szyfrogram += chr(litera)
     return szyfrogram
 
-# def alfaniczny_j(tekst, extra):
-#     if len(extra) < 2:
-#         return "Za mało liter w tekście jawnym"
-    
-#     mozliweKlucze = []
-#     def modInverse(a, m):
-#         for x in range(1, m):
-#             if (a * x) % m == 1:
-#                 return x
-#         return -1
-
-#     for i in range(len(extra)):
-#         for b in range(26):
-#             for a in range(1, 27):
-#                 if modInverse(a, 26) != -1:
-#                     if ord('a') <= ord(extra[i]) <= ord('z'):
-#                         if ((a * (ord(extra[i]) - ord('a')) + b) % 26) + ord('a') == ord(tekst[i]):
-#                             mozliweKlucze.append([b, a])
-#                     elif ord('A') <= ord(extra[i]) <= ord('Z'):
-#                         if ((a * (ord(extra[i]) - ord('A')) + b) % 26) + ord('A') == ord(tekst[i]):
-#                             mozliweKlucze.append([b, a])
-#     return mozliweKlucze
-def alfaniczny_j():
+def alfaniczny_j(data, extra):
     return
 
 
