@@ -107,8 +107,53 @@ def alfaniczny_d(a, b, data):
         szyfrogram += chr(litera)
     return szyfrogram
 
+# def alfaniczny_j(tekst, extra):
+#     if len(extra) < 2:
+#         return "Za mało liter w tekście jawnym"
+    
+#     mozliweKlucze = []
+#     def modInverse(a, m):
+#         for x in range(1, m):
+#             if (a * x) % m == 1:
+#                 return x
+#         return -1
+
+#     for i in range(len(extra)):
+#         for b in range(26):
+#             for a in range(1, 27):
+#                 if modInverse(a, 26) != -1:
+#                     if ord('a') <= ord(extra[i]) <= ord('z'):
+#                         if ((a * (ord(extra[i]) - ord('a')) + b) % 26) + ord('a') == ord(tekst[i]):
+#                             mozliweKlucze.append([b, a])
+#                     elif ord('A') <= ord(extra[i]) <= ord('Z'):
+#                         if ((a * (ord(extra[i]) - ord('A')) + b) % 26) + ord('A') == ord(tekst[i]):
+#                             mozliweKlucze.append([b, a])
+#     return mozliweKlucze
+def alfaniczny_j():
+    return
+
+
+def alfaniczny_k(data):
+    message = ""
+    data = data.replace('\n', ' ')
+    for key_b in range(1, 27):
+        for key_a in [1, 3, 5, 7, 9, 11, 15, 17, 19, 21, 23, 25]:
+            for character in data:
+                a = ord(character)
+                if a in range(65, 91):
+                    a = (a - key_b) * key_a
+                    while a > 90:
+                        a = a - 26
+                if a in range(97, 123):
+                    a = (a - key_b) * key_a
+                    while a > 122:
+                        a = a - 26
+                message += chr(a)
+            message += "\n"
+    return message
+
 def main():
-    parser = argparse.ArgumentParser(description='Opis twojego programu')
+    parser = argparse.ArgumentParser(description='Szyfr Cezarego oraz Alfaniczny')
     parser.add_argument('-c', '--option_c', help='Cezar', action='store_true')
     parser.add_argument('-a', '--option_a', help='Alfaniczny', action='store_true')
     parser.add_argument('-e', '--option_e', help='Szyfrowanie', action='store_true')
@@ -124,7 +169,6 @@ def main():
                 data = file.read()
             with open('key.txt', 'r') as file:
                 readkey = file.read()
-
             key = int(readkey)
             if not 1 <= key <= 25:
                 raise ValueError(f"Niewłaściwa wartość klucza, klucz musi być liczbą naturalną w zakresie 1...25, podana wartość: {readkey}")
@@ -142,7 +186,6 @@ def main():
                 data = file.read()
             with open('key.txt', 'r') as file:
                 readkey = file.read()
-
             key = int(readkey)
             if not 1 <= key <= 25:
                 raise ValueError(f"Niewłaściwa wartość klucza, klucz musi być liczbą naturalną w zakresie 1...25, podana wartość: {readkey}")
@@ -161,6 +204,7 @@ def main():
         with open("key-new.txt", "w") as file:
             file.write(str(key_new))
 
+
     if args.option_c and args.option_k:
         with open('crypto.txt', 'r') as file:
             data = file.read()
@@ -175,7 +219,6 @@ def main():
                 data = file.read()
             with open('key.txt', 'r') as file:
                 key = file.read().split()
-
             a = int(key[0])
             b = int(key[1])
             nwd_value = nwd(a, 26)
@@ -194,7 +237,6 @@ def main():
                 data = file.read()
             with open('key.txt', 'r') as file:
                 key = file.read().split()
-
             a = int(key[0])
             b = int(key[1])
             nwd_value = nwd(a, 26)
@@ -205,12 +247,24 @@ def main():
                 file.write(decrypt)
         except ValueError as e:
             raise ValueError(str(e))
+        
+    if args.option_a and args.option_j:
+        with open('crypto.txt', 'r') as file:
+            data = file.read()
+        with open('extra.txt', 'r') as file:
+            extra = file.read()
+        key_new = alfaniczny_j(data, extra)
+        with open("key-new.txt", "w") as file:
+            file.write(str(key_new))
 
 
-    # if args.option_j:
-    #     print("Kryptoanaliza z tekstem jawnym")
-    # if args.option_k:
-    #     print("Kryptoanaliza wyłącznie w oparciu o kryptogram")
+    if args.option_a and args.option_k:
+        with open('crypto.txt', 'r') as file:
+            data = file.read()
+        message = alfaniczny_k(data)
+        with open("plain.txt", "w") as file:
+            file.write(str(message))
+
     
 
 if __name__ == "__main__":
