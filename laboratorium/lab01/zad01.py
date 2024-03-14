@@ -1,4 +1,11 @@
 import argparse
+
+def nwd(a, b):
+    if b > 0:
+        return nwd(b, a%b)
+    return a
+
+
 def cezar(key, data):
     szyfrogram = ""
     for i in data: 
@@ -25,39 +32,42 @@ def cezar_d(key, data):
 
 
 
-def nwd(a, b):
-    if b > 0:
-        return nwd(b, a%b)
-    return a
+def find_prime(x):
+    counter = 0
+    while counter * x % 26 != 1:
+        counter += 1
+    return counter
 
 
 def alfaniczny(a, b, data):
     szyfrogram = ""
-    for i in data:
-        litera = (a*ord(i)+b)%26+97
-        # if litera > ord('z'):
-        #     litera -= 26
-        # elif litera < ord('a'): 
-        #     litera += 26
+    for character in data:
+        litera = ord(character)
+        if litera in range(65, 91):
+            litera = litera * a + b
+            while litera > 90:
+                litera = litera - 26
+        if litera in range(97, 123):
+            litera = litera * a + b
+            while litera > 122:
+                litera = litera - 26
         szyfrogram += chr(litera)
     return szyfrogram
 
 
 def alfaniczny_d(a, b, data):
     szyfrogram = ""
-
-    for i in range(1, 26):
-            if (a * i) % 26 == 1:
-                aprim = i
-
-    print(aprim)
-
-    for i in data:
-        litera = (aprim*(ord(i)-b))%26+97
-        # if litera > ord('z'):
-        #     litera -= 26
-        # elif litera < ord('a'): 
-        #     litera += 26
+    aprim=find_prime(a)
+    for character in data:
+        litera = ord(character)
+        if litera in range(65, 91):
+            litera = aprim*(litera - b) 
+            while litera > 90:
+                litera = litera - 26
+        if litera in range(97, 123):
+            litera = aprim * (litera - b)
+            while litera > 122:
+                litera = litera - 26
         szyfrogram += chr(litera)
     return szyfrogram
 
@@ -113,6 +123,7 @@ def main():
             szyfrogram = alfaniczny(a, b, data)
             with open("crypto.txt", "a") as file:
                 file.write(szyfrogram)
+            print(f"zaszyfrowany tekst to {szyfrogram}")
 
     if args.option_a and args.option_d:
         with open('crypto.txt', 'r') as file:
