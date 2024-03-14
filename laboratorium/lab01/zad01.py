@@ -63,7 +63,7 @@ def cezar_j(data, extra):
             file.write(decrypt)
         return key
     else:
-        return "Can't find a unique result."
+        return "Can't find a key"
 
 
 
@@ -125,8 +125,19 @@ def alfaniczny_d(a, b, data):
         szyfrogram += chr(litera)
     return szyfrogram
 
-def alfaniczny_j(data, extra):
-    return
+def alfaniczny_j(dane, extra):
+    if len(extra) < len(dane):
+        dane = dane[:len(extra)]
+
+    for a in range(1, 26):
+        for b in range(26):
+            zaszyfrowany = alfaniczny(a, b, extra)
+            if zaszyfrowany == dane:
+                klucz = f"{a} {b}"
+                return klucz
+    return "Can't find a key"
+
+
 
 
 def alfaniczny_k(data):
