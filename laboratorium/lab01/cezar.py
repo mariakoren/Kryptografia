@@ -53,9 +53,7 @@ def cezar_j(data, extra):
                 key = (ord(character) - ord(key_word[index_character % len(key_word)])) % 26
                 keys.append(key)
                 extra_index = (extra_index + 1) % len(extra) 
-    print(keys)
     unique = set(keys)
-    print(unique)
     if len(unique) == 1:
         key = unique.pop()
         decrypt = cezar_d(key, data)
