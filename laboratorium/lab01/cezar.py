@@ -1,3 +1,5 @@
+# autor: Maria Koren 
+
 import argparse
 
 def nwd(a, b):
@@ -57,7 +59,7 @@ def cezar_j(data, extra):
     if len(unique) == 1:
         key = unique.pop()
         decrypt = cezar_d(key, data)
-        with open("plain.txt", "w") as file:
+        with open("decrypt.txt", "w") as file:
             file.write(decrypt)
         return key
     else:
@@ -133,7 +135,7 @@ def alfaniczny_j(data, extra):
             if zaszyfrowany == data_copy:
                 key = f"{a} {b}"
                 decrypt = alfaniczny_d(a, b, data)
-                with open("plain.txt", "w") as file:
+                with open("decrypt.txt", "w") as file:
                     file.write(decrypt)
                 return key
     
@@ -177,7 +179,7 @@ def main():
             with open('plain.txt', 'r') as file:
                 data = file.read()
             with open('key.txt', 'r') as file:
-                readkey = file.read()
+                readkey = file.readline().split(" ")[0]
             key = int(readkey)
             if not 1 <= key <= 25:
                 raise ValueError(f"Niewłaściwa wartość klucza, klucz musi być liczbą naturalną w zakresie 1...25, podana wartość: {readkey}")
@@ -194,12 +196,12 @@ def main():
             with open('crypto.txt', 'r') as file:
                 data = file.read()
             with open('key.txt', 'r') as file:
-                readkey = file.read()
+                readkey = file.readline().split(" ")[0]
             key = int(readkey)
             if not 1 <= key <= 25:
                 raise ValueError(f"Niewłaściwa wartość klucza, klucz musi być liczbą naturalną w zakresie 1...25, podana wartość: {readkey}")
             decrypt = cezar_d(key, data)
-            with open("plain.txt", "w") as file:
+            with open("decrypt.txt", "w") as file:
                 file.write(decrypt)
         except ValueError as e:
             raise ValueError(str(e))
@@ -218,7 +220,7 @@ def main():
         with open('crypto.txt', 'r') as file:
             data = file.read()
         message = cezar_k(data)
-        with open("plain.txt", "w") as file:
+        with open("decrypt.txt", "w") as file:
             file.write(str(message))
 
 
@@ -228,8 +230,8 @@ def main():
                 data = file.read()
             with open('key.txt', 'r') as file:
                 key = file.read().split()
-            a = int(key[0])
-            b = int(key[1])
+            a = int(key[1])
+            b = int(key[0])
             nwd_value = nwd(a, 26)
             if nwd_value != 1:
                 raise ValueError(f"Niepoprawna wartość klucza, klucz musi być parą liczb naturalnych takich, że NWD(a,26)=1, nwd {nwd_value}")
@@ -246,13 +248,13 @@ def main():
                 data = file.read()
             with open('key.txt', 'r') as file:
                 key = file.read().split()
-            a = int(key[0])
-            b = int(key[1])
+            a = int(key[1])
+            b = int(key[0])
             nwd_value = nwd(a, 26)
             if nwd_value != 1:
                 raise ValueError(f"Niepoprawna wartość klucza, klucz musi być parą liczb naturalnych takich, że NWD(a,26)=1, nwd {nwd_value}")
             decrypt = alfaniczny_d(a, b, data)
-            with open("plain.txt", "a") as file:
+            with open("decrypt.txt", "a") as file:
                 file.write(decrypt)
         except ValueError as e:
             raise ValueError(str(e))
@@ -271,7 +273,7 @@ def main():
         with open('crypto.txt', 'r') as file:
             data = file.read()
         message = alfaniczny_k(data)
-        with open("plain.txt", "w") as file:
+        with open("decrypt.txt", "w") as file:
             file.write(str(message))
 
     else:
