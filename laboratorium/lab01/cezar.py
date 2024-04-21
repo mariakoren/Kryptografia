@@ -63,7 +63,8 @@ def cezar_j(data, extra):
             file.write(decrypt)
         return key
     else:
-        return "Can't find a key"
+        raise ValueError("can't find a key")
+
 
 
 
@@ -133,13 +134,13 @@ def alfaniczny_j(data, extra):
         for b in range(26):
             zaszyfrowany = alfaniczny(a, b, extra)
             if zaszyfrowany == data_copy:
-                key = f"{a} {b}"
+                key = f"{b} {a}"
                 decrypt = alfaniczny_d(a, b, data)
                 with open("decrypt.txt", "w") as file:
                     file.write(decrypt)
                 return key
     
-    return "Can't find a key"
+    raise ValueError("can't find a key")
 
 
 
@@ -236,7 +237,7 @@ def main():
             if nwd_value != 1:
                 raise ValueError(f"Niepoprawna wartość klucza, klucz musi być parą liczb naturalnych takich, że NWD(a,26)=1, nwd {nwd_value}")
             szyfrogram = alfaniczny(a, b, data)
-            with open("crypto.txt", "a") as file:
+            with open("crypto.txt", "w") as file:
                 file.write(szyfrogram)
         except ValueError as e:
             raise ValueError(str(e))
@@ -254,7 +255,7 @@ def main():
             if nwd_value != 1:
                 raise ValueError(f"Niepoprawna wartość klucza, klucz musi być parą liczb naturalnych takich, że NWD(a,26)=1, nwd {nwd_value}")
             decrypt = alfaniczny_d(a, b, data)
-            with open("decrypt.txt", "a") as file:
+            with open("decrypt.txt", "w") as file:
                 file.write(decrypt)
         except ValueError as e:
             raise ValueError(str(e))
