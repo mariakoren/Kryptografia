@@ -1,0 +1,8 @@
+Autor Maria Kore
+
+Plik block.py wykorzystuje bibliotekę Pillow, która jest biblioteką do obsługi obrazów w Pythonie. 
+Jeśli nie jest zainstalowana na urządzeniu to należy użyc polecenia:
+pip install Pillow
+
+do uruchomienia programu block.py należy użyć polecenia:
+python block.py

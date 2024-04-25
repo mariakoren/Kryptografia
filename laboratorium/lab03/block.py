@@ -1,38 +1,48 @@
 # Autor: Maria Koren
 
 from PIL import Image
+import hashlib
+import random
 
-def save(data, where, message="Done"):
+input_image = Image.open("plain.bmp")
+
+
+def save(data, where="images/image.bmp", message="Done"):
     new_data = bytes(data)
-    output_image = Image.new("L", input_image.size)
-    output_image.putdata(new_data)
+
+    output_image = input_image.copy()
+    output_image.frombytes(bytes(new_data))
     output_image.save(where)
     print(message)
 
-def encrypt_image(input_image, key, mode):
-    image_data = input_image.tobytes()
-    size = input_image.size
-    new_data = []
-    if mode == "ECB":
-        for x in range(size[0]):
-            for y in range(size[1]):
-                pp = y * size[0] + x 
-                op = image_data[pp]
-                pta = op ^ key
-                new_data.append(pta)
-    elif mode == "CBC":
-        new_data = [image_data[0] ^ key]
-        for x in range(size[0]*size[1] - 1):
-            new_data.append(new_data[x] ^ image_data[x + 1] ^ key)
 
-    new_data = new_data[:size[0]*size[1]]
-    return new_data
+block_size = 8
+image_data = input_image.tobytes()
+size = input_image.size
 
-input_image = Image.open("plain.bmp")
-key = "klucz"
-key_bytes = key.encode("UTF-8")
-ecb_encrypted_data = encrypt_image(input_image, key_bytes[0], "ECB")
-save(ecb_encrypted_data, "ecb_crypto.bmp", "zapisano ecb")
-cbc_encrypted_data = encrypt_image(input_image, key_bytes[0], "CBC")
-save(cbc_encrypted_data, "cbc_crypto.bmp", "zapisano cbc")
-print("Done")
+# ECB
+new_data = []
+keys = []
+for _ in range(16): 
+    key = hashlib.md5(str(random.random() * _).encode("UTF-8")).digest()
+    keys.append(key)
+
+for i in range(len(image_data)):
+    op = image_data[i] 
+    pta = op ^ keys[i % 16][i % 8]  
+    new_data.append(pta)
+
+assert len(new_data) == len(image_data)
+
+save(new_data, "ecb_crypto.bmp")
+
+# CBC
+new_key = 156
+iv = new_key 
+new_data = [image_data[0] ^ iv]
+for i in range(1, len(image_data)): 
+    new_data.append(new_data[i-1] ^ image_data[i] ^ keys[i % 16][i % 8])
+
+assert len(new_data) == len(image_data)
+
+save(new_data, "cbc_crypto.bmp")
