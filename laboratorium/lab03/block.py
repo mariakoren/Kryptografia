@@ -1,7 +1,6 @@
 # Autor: Maria Koren
 
 from PIL import Image
-import hashlib
 import random
 
 input_image = Image.open("plain.bmp")
@@ -24,7 +23,8 @@ size = input_image.size
 new_data = []
 keys = []
 for _ in range(16): 
-    key = hashlib.md5(str(random.random() * _).encode("UTF-8")).digest()
+    # Generowanie kluczy jako losowych bajtów
+    key = bytes([random.randint(0, 255) for _ in range(block_size)])
     keys.append(key)
 
 for i in range(len(image_data)):
@@ -44,5 +44,4 @@ for i in range(1, len(image_data)):
     new_data.append(new_data[i-1] ^ image_data[i] ^ keys[i % 16][i % 8])
 
 assert len(new_data) == len(image_data)
-
 save(new_data, "cbc_crypto.bmp")
